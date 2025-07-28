@@ -13,21 +13,25 @@ import numpy as np
 import pandas as pd
 import joblib
 from transformers import BertTokenizer, BertForSequenceClassification
+from huggingface_hub import hf_hub_download
 
 # -----------------------
 # 📁 モデル・トークナイザー・ラベルエンコーダーの読み込み
 # -----------------------
-@st.cache_resource
+@st.cache_resource(show_spinner="モデルを読み込んでいます...")
 def load_model_and_tokenizer():
-    model = BertForSequenceClassification.from_pretrained("model_output")
-    tokenizer = BertTokenizer.from_pretrained("model_output")
+    model = BertForSequenceClassification.from_pretrained("RICE250727/mood-classifier")
+    tokenizer = BertTokenizer.from_pretrained("RICE250727/mood-classifier")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     model.eval()
     return model, tokenizer, device
 
 model, tokenizer, device = load_model_and_tokenizer()
-label_encoder = joblib.load("label_encoder.pkl")
+
+# ラベルエンコーダーもオンラインから
+label_encoder_path = hf_hub_download(repo_id="RICE250727/mood-classifier", filename="label_encoder.pkl")
+label_encoder = joblib.load(label_encoder_path)
 
 # -----------------------
 # 🔍 感情分析の推論関数
