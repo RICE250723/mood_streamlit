@@ -128,6 +128,6 @@ if os.path.exists(log_path):
         {"selector": "th", "props": [("text-align", "center")]}
     ])
 
-    st.markdown(styled_df.to_html(escape=False), unsafe_allow_html=True)
+    st.dataframe(df_logs.style.applymap(color_emotion, subset=["感情"]))
 else:
     st.info("まだ記録がありません。")
